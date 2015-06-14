@@ -1,0 +1,79 @@
+﻿<Page
+    x:Class="ICICIMerchant.View.StatusOfPreviosTicketView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:ICICIMerchant.View"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid x:Name="LayoutRoot">
+
+        <Grid.ChildrenTransitions>
+            <TransitionCollection>
+                <EntranceThemeTransition/>
+            </TransitionCollection>
+        </Grid.ChildrenTransitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header Panel -->
+        <Image 
+            VerticalAlignment="Top"
+            Height="40"
+            Width="480"
+            Grid.ColumnSpan="2"
+            Source="ms-appx:///Assets/first-data-logo.png"/>
+
+        <Grid VerticalAlignment="Center" Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock 
+                Grid.Row="0"
+                Text="STATUS OF PREVIOUS TICKET" 
+                HorizontalAlignment="Center"
+                Style="{ThemeResource TitleTextBlockStyle}" Margin="0,12,0,0"/>
+
+            <!--TODO: Content should be placed within the following grid-->
+
+            <TextBox
+                PlaceholderText="Enter your Ticket No."
+                InputScope="Number"
+                Grid.Row="1"/>
+
+            <Button
+                HorizontalAlignment="Center"
+                Grid.Row="2"
+                x:Name="btnSubmit"
+                Content="Submit"/>
+           
+            <Button
+                HorizontalAlignment="Center"
+                Grid.Row="3"
+                x:Name="btnLastTicketHistory"
+                Content="Last Ticket History"/>
+       
+        </Grid>
+
+        <!-- Footer Panel -->
+        <Image 
+            VerticalAlignment="Bottom"
+            Grid.Row="2"
+            Height="40"
+            Width="480"
+            Grid.ColumnSpan="2"
+            Source="ms-appx:///Assets/first-data-logo.png"
+            Margin="0 0 0 5"/>
+    </Grid>
+</Page>

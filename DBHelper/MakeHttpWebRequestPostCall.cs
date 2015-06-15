@@ -23,7 +23,7 @@ namespace ICICIMerchant.DBHelper
             string responseResutl = string.Empty;
             try
             {
-                var webRequest = (HttpWebRequest)WebRequest.Create(DBHandler.url + methodName);
+                var webRequest = (HttpWebRequest)WebRequest.Create(DBHandler.url + DBHandler.login_url_paddup);
                 webRequest.Method = "POST";
                 
                 webRequest.ContentType = "application/x-www-form-urlencoded";

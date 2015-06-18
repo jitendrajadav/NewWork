@@ -32,7 +32,7 @@ namespace ICICIMerchant.DBHelper
                 string finalSerialized = model.ToString();//Serialized;
                 using (StreamWriter sw = new StreamWriter(await webRequest.GetRequestStreamAsync()))
                 {
-                    sw.Write(finalSerialized);
+                    sw.Write(model);
                 }
 
                 HttpWebResponse httpWebResponse = await webRequest.GetResponseAsync() as HttpWebResponse;

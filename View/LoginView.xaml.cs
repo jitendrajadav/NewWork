@@ -114,11 +114,17 @@ namespace ICICIMerchant.View
         {
             //var result = EncryptionUtility.AES_Encrypt("Jitendra", "Jadav");
             //var decrypt = EncryptionUtility.AES_Decrypt("dAYV8p7FHE8JjdXx2A6msg==", "Jadav");
-            var npostData = "grant_type=password&client_id=client1&client_secret=secret&username=" +
-                EncryptionUtility.Encrypt(txtUsername.Text, DBHandler.encryptiPass) + "&password=" +
-                EncryptionUtility.Encrypt(pwdPassword.Password, DBHandler.encryptiPass) + "&sec=" +
-                EncryptionUtility.Encrypt(txtUsername.Text, DBHandler.encryptiPassSec);
-            npostData = "grant_type=password&client_id=client1&client_secret=secret&username=g7U9yAWMqSsFHXs2L4PRrg%3D&password=odBmM6sTZA32MGj1uolwfg%3D&sec=Qcs3Z8DfHVdpXoQnCVg%2Fhg%3D%3D";
+            //var npostData = "grant_type=password&client_id=client1&client_secret=secret&username=" +
+            //    EncryptionUtility.Encrypt(txtUsername.Text, DBHandler.encryptiPass) + "&password=" +
+            //    EncryptionUtility.Encrypt(pwdPassword.Password, DBHandler.encryptiPass) + "&sec=" +
+            //    EncryptionUtility.Encrypt(txtUsername.Text, DBHandler.encryptiPassSec);
+                        var npostData = "grant_type=password&client_id=client1&client_secret=secret&username=" +
+                EncryptionUtility.Encrypt(txtUsername.Text, DBHandler.encryptiPass, DBHandler.ivKey) + "&password=" +
+                EncryptionUtility.Encrypt(pwdPassword.Password, DBHandler.encryptiPass, DBHandler.ivKey) + "&sec=" +
+                EncryptionUtility.Encrypt(txtUsername.Text, DBHandler.encryptiPassSec, DBHandler.ivKey);
+
+            
+            //npostData = "grant_type=password&client_id=client1&client_secret=secret&username=g7U9yAWMqSsFHXs2L4PRrg%3D&password=odBmM6sTZA32MGj1uolwfg%3D&sec=Qcs3Z8DfHVdpXoQnCVg%2Fhg%3D%3D";
            var test= MakeHttpWebRequestPostCall.Login(npostData, "");
             Frame.Navigate(typeof(HomeView));
         }

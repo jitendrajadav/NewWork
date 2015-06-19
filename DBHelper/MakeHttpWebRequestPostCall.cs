@@ -17,7 +17,7 @@ namespace ICICIMerchant.DBHelper
         /// <param name="model">Class objcet</param>
         /// <param name="methodName">method name for e.g essayFeedbackRequest</param>
         /// <returns></returns>
-        public static async Task<string> Login(object model, string methodName)
+        public static async Task<string> Login(object model)
         {
         callAgain:
             string responseResutl = string.Empty;
@@ -28,8 +28,8 @@ namespace ICICIMerchant.DBHelper
                 
                 webRequest.ContentType = "application/x-www-form-urlencoded";
                // webRequest.ContentType = "application/json; charset=utf-8";
-                var Serialized = SerializeDeserialize.Serialize(model);
-                string finalSerialized = model.ToString();//Serialized;
+                //var Serialized = SerializeDeserialize.Serialize(model);
+                //string finalSerialized = model.ToString();//Serialized;
                 using (StreamWriter sw = new StreamWriter(await webRequest.GetRequestStreamAsync()))
                 {
                     sw.Write(model);
@@ -54,5 +54,39 @@ namespace ICICIMerchant.DBHelper
             }
         }
 
+        public async static Task<string> Login(string data, string url)
+        {
+            string rawServerResponse = null;
+            WebRequest webRequest = WebRequest.Create(DBHandler.url + DBHandler.login_url_paddup);
+            webRequest.ContentType = "application/x-www-form-urlencoded";
+            webRequest.Method = "POST";
+
+            string body = data;
+            byte[] writeBuffer = Encoding.UTF8.GetBytes(body);
+            using (Stream stream = await webRequest.GetRequestStreamAsync())
+            {
+                stream.Write(writeBuffer, 0, writeBuffer.Length);
+            }
+
+            // response
+            try
+            {
+                var respAsyncResult = await webRequest.GetResponseAsync();
+                using (WebResponse response = await webRequest.GetResponseAsync())
+                {
+                    using (Stream responseStream = response.GetResponseStream())
+                    {
+                        using (StreamReader reader = new StreamReader(responseStream))
+                        {
+                            rawServerResponse = reader.ReadToEnd(); // read response data
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            return rawServerResponse;
+        }
     }
 }

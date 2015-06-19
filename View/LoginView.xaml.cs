@@ -2,20 +2,8 @@
 using ICICIMerchant.DBHelper;
 using ICICIMerchant.Helper;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.Graphics.Display;
-using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
 // The Basic Page item template is documented at http://go.microsoft.com/fwlink/?LinkID=390556
@@ -110,7 +98,7 @@ namespace ICICIMerchant.View
 
         #endregion
 
-        private void btnLogin_Click(object sender, RoutedEventArgs e)
+        private async void btnLogin_Click(object sender, RoutedEventArgs e)
         {
             //var result = EncryptionUtility.AES_Encrypt("Jitendra", "Jadav");
             //var decrypt = EncryptionUtility.AES_Decrypt("dAYV8p7FHE8JjdXx2A6msg==", "Jadav");
@@ -118,15 +106,24 @@ namespace ICICIMerchant.View
             //    EncryptionUtility.Encrypt(txtUsername.Text, DBHandler.encryptiPass) + "&password=" +
             //    EncryptionUtility.Encrypt(pwdPassword.Password, DBHandler.encryptiPass) + "&sec=" +
             //    EncryptionUtility.Encrypt(txtUsername.Text, DBHandler.encryptiPassSec);
-                        var npostData = "grant_type=password&client_id=client1&client_secret=secret&username=" +
-                EncryptionUtility.Encrypt(txtUsername.Text, DBHandler.encryptiPass, DBHandler.ivKey) + "&password=" +
-                EncryptionUtility.Encrypt(pwdPassword.Password, DBHandler.encryptiPass, DBHandler.ivKey) + "&sec=" +
-                EncryptionUtility.Encrypt(txtUsername.Text, DBHandler.encryptiPassSec, DBHandler.ivKey);
 
-            
+
+                //        var npostData = "grant_type=password&client_id=client1&client_secret=secret&username=" +
+                //EncryptionUtility.Encrypt(txtUsername.Text, DBHandler.encryptiPass, DBHandler.ivKey) + "&password=" +
+                //EncryptionUtility.Encrypt(pwdPassword.Password, DBHandler.encryptiPass, DBHandler.ivKey) + "&sec=" +
+                //EncryptionUtility.Encrypt(txtUsername.Text, DBHandler.encryptiPassSec, DBHandler.ivKey);
+
+            EncryptionHelper objEncryptionHelper = new EncryptionHelper();
+            var npostData = "grant_type=password&client_id=client1&client_secret=secret&username=" +
+                objEncryptionHelper.Encrypt(txtUsername.Text, DBHandler.ivKey,DBHandler.key1) + "&password=" +
+                objEncryptionHelper.Encrypt(pwdPassword.Password, DBHandler.ivKey, DBHandler.key1) + "&sec=" +
+                objEncryptionHelper.Encrypt(txtUsername.Text, DBHandler.ivKey, DBHandler.key2);
+            //var test1 = EncryptionProvider.Encrypt("62577044", "test");
+
             //npostData = "grant_type=password&client_id=client1&client_secret=secret&username=g7U9yAWMqSsFHXs2L4PRrg%3D&password=odBmM6sTZA32MGj1uolwfg%3D&sec=Qcs3Z8DfHVdpXoQnCVg%2Fhg%3D%3D";
-           var test= MakeHttpWebRequestPostCall.Login(npostData, "");
+           var test= await MakeHttpWebRequestPostCall.Login(npostData, "");
             Frame.Navigate(typeof(HomeView));
         }
     }
+
 }

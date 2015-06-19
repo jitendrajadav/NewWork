@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ICICIMerchant.DBHelper;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -15,7 +16,7 @@ namespace ICICIMerchant.Helper
     {
         public static string AES_Encrypt(string input, string pass)
         {
-            SymmetricKeyAlgorithmProvider SAP = SymmetricKeyAlgorithmProvider.OpenAlgorithm(SymmetricAlgorithmNames.AesEcbPkcs7);
+            SymmetricKeyAlgorithmProvider SAP = SymmetricKeyAlgorithmProvider.OpenAlgorithm(SymmetricAlgorithmNames.AesCbcPkcs7);
             CryptographicKey AES;
             HashAlgorithmProvider HAP = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Md5);
             CryptographicHash Hash_AES = HAP.CreateHash();
@@ -46,7 +47,7 @@ namespace ICICIMerchant.Helper
 
         public static string AES_Decrypt(string input, string pass)
         {
-            SymmetricKeyAlgorithmProvider SAP = SymmetricKeyAlgorithmProvider.OpenAlgorithm(SymmetricAlgorithmNames.AesEcbPkcs7);
+            SymmetricKeyAlgorithmProvider SAP = SymmetricKeyAlgorithmProvider.OpenAlgorithm(SymmetricAlgorithmNames.AesCbcPkcs7);
             CryptographicKey AES;
             HashAlgorithmProvider HAP = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Md5);
             CryptographicHash Hash_AES = HAP.CreateHash();
@@ -94,7 +95,7 @@ namespace ICICIMerchant.Helper
                 var toDecryptBuffer = CryptographicBuffer.ConvertStringToBinary(toEncrypt, BinaryStringEncoding.Utf8);
 
                 // Open a symmetric algorithm provider for the specified algorithm.
-                var aes = SymmetricKeyAlgorithmProvider.OpenAlgorithm(SymmetricAlgorithmNames.AesEcbPkcs7);
+                var aes = SymmetricKeyAlgorithmProvider.OpenAlgorithm(SymmetricAlgorithmNames.AesCbcPkcs7);
 
                 // Create a symmetric key.
                 var symetricKey = aes.CreateSymmetricKey(keyHash);
@@ -156,7 +157,7 @@ namespace ICICIMerchant.Helper
                 IBuffer toDecryptBuffer = CryptographicBuffer.DecodeFromBase64String(cipherString);
 
                 // Open a symmetric algorithm provider for the specified algorithm.
-                SymmetricKeyAlgorithmProvider aes = SymmetricKeyAlgorithmProvider.OpenAlgorithm(SymmetricAlgorithmNames.AesEcbPkcs7);
+                SymmetricKeyAlgorithmProvider aes = SymmetricKeyAlgorithmProvider.OpenAlgorithm(SymmetricAlgorithmNames.AesCbcPkcs7);
 
                 // Create a symmetric key.
                 var symetricKey = aes.CreateSymmetricKey(keyHash);
@@ -193,27 +194,6 @@ namespace ICICIMerchant.Helper
             return CryptographicBuffer.EncodeToBase64String(encrypted);
         }
 
-        public static string Decrypt(string dataToDecrypt, string password, string salt)
-        {
-            // Generate a key and IV from the password and salt
-            IBuffer aesKeyMaterial;
-            IBuffer iv;
-            uint iterationCount = 10000;
-            GenerateKeyMaterial(password, salt, iterationCount, out aesKeyMaterial, out iv);
-
-            // Setup an AES key, using AES in CBC mode and applying PKCS#7 padding on the input
-            SymmetricKeyAlgorithmProvider aesProvider = SymmetricKeyAlgorithmProvider.OpenAlgorithm(SymmetricAlgorithmNames.AesCbcPkcs7);
-            CryptographicKey aesKey = aesProvider.CreateSymmetricKey(aesKeyMaterial);
-
-            // Convert the base64 input to an IBuffer for decryption
-            IBuffer ciphertext = CryptographicBuffer.DecodeFromBase64String(dataToDecrypt);
-
-            // Decrypt the data and convert it back to a string
-            IBuffer decrypted = CryptographicEngine.Decrypt(aesKey, ciphertext, iv);
-            byte[] decryptedArray = decrypted.ToArray();
-            return Encoding.UTF8.GetString(decryptedArray, 0, decryptedArray.Length);
-        }
-
         private static void GenerateKeyMaterial(string password, string salt, uint iterationCount, out IBuffer keyMaterial, out IBuffer iv)
         {
             // Setup KDF parameters for the desired salt and iteration count
@@ -236,6 +216,196 @@ namespace ICICIMerchant.Helper
             byte[] keyMaterialBytes = keyAndIv.ToArray();
             keyMaterial = WindowsRuntimeBuffer.Create(keyMaterialBytes, 0, keySize, keySize);
             iv = WindowsRuntimeBuffer.Create(keyMaterialBytes, keySize, ivSize, ivSize);
+        }
+
+        public static string Decrypt(string dataToDecrypt, string password, string salt)
+        {
+            // Generate a key and IV from the password and salt
+            IBuffer aesKeyMaterial;
+            IBuffer iv;
+            uint iterationCount = 10000;
+            GenerateKeyMaterial(password, salt, iterationCount, out aesKeyMaterial, out iv);
+
+            // Setup an AES key, using AES in CBC mode and applying PKCS#7 padding on the input
+            SymmetricKeyAlgorithmProvider aesProvider = SymmetricKeyAlgorithmProvider.OpenAlgorithm(SymmetricAlgorithmNames.AesCbcPkcs7);
+            CryptographicKey aesKey = aesProvider.CreateSymmetricKey(aesKeyMaterial);
+
+            // Convert the base64 input to an IBuffer for decryption
+            IBuffer ciphertext = CryptographicBuffer.DecodeFromBase64String(dataToDecrypt);
+
+            // Decrypt the data and convert it back to a string
+            IBuffer decrypted = CryptographicEngine.Decrypt(aesKey, ciphertext, iv);
+            byte[] decryptedArray = decrypted.ToArray();
+            return Encoding.UTF8.GetString(decryptedArray, 0, decryptedArray.Length);
+        }
+
+    }
+
+    public static class EncryptionProvider
+    {
+      
+
+        /// <summary> 
+        /// Encrypt a string 
+        /// </summary> 
+        /// <param name="input">String to encrypt</param> 
+        /// <param name="password">Password to use for encryption</param> 
+        /// <returns>Encrypted string</returns> 
+        public static string Encrypt(string input, string password)
+        {
+            //make sure we have data to work with 
+            if (string.IsNullOrEmpty(input))
+                throw new ArgumentException("input cannot be empty");
+            if (string.IsNullOrEmpty(password))
+                throw new ArgumentException("password cannot be empty");
+            // get IV, key and encrypt 
+            var iv = CreateInitializationVector(DBHandler.ivKey);
+            var key = CreateKey(DBHandler.key1);
+            var encryptedBuffer = CryptographicEngine.Encrypt(
+              key, CryptographicBuffer.ConvertStringToBinary(input, BinaryStringEncoding.Utf8), iv);
+            return CryptographicBuffer.EncodeToBase64String(encryptedBuffer);
+        }
+        /// <summary> 
+        /// Decrypt a string previously ecnrypted with Encrypt method and the same password 
+        /// </summary> 
+        /// <param name="input">String to decrypt</param> 
+        /// <param name="password">Password to use for decryption</param> 
+        /// <returns>Decrypted string</returns> 
+        public static string Decrypt(string input, string password)
+        {
+            //make sure we have data to work with 
+            if (string.IsNullOrEmpty(input))
+                throw new ArgumentException("input cannot be empty");
+            if (string.IsNullOrEmpty(password))
+                throw new ArgumentException("password cannot be empty");
+            // get IV, key and decrypt 
+            var iv = CreateInitializationVector(password);
+            var key = CreateKey(password);
+            var decryptedBuffer = CryptographicEngine.Decrypt(
+              key, CryptographicBuffer.DecodeFromBase64String(input), iv);
+            return CryptographicBuffer.ConvertBinaryToString(
+             BinaryStringEncoding.Utf8, decryptedBuffer);
+        }
+        /// <summary> 
+        /// Create initialization vector IV 
+        /// </summary> 
+        /// <param name="password">Password is used for random vector generation</param> 
+        /// <returns>Vector</returns> 
+        private static IBuffer CreateInitializationVector(string password)
+        {
+            var provider = SymmetricKeyAlgorithmProvider.OpenAlgorithm("AES_CBC_PKCS7");
+
+            var newPassword = password;
+            // make sure we satify minimum length requirements 
+            while (newPassword.Length < provider.BlockLength)
+            {
+                newPassword = newPassword + password;
+            }
+            //create vecotr 
+            var iv = CryptographicBuffer.CreateFromByteArray(
+              UTF8Encoding.UTF8.GetBytes(newPassword));
+            return iv;
+        }
+        /// <summary> 
+        /// Create encryption key 
+        /// </summary> 
+        /// <param name="password">Password is used for random key generation</param> 
+        /// <returns></returns> 
+        private static CryptographicKey CreateKey(string password)
+        {
+            var provider = SymmetricKeyAlgorithmProvider.OpenAlgorithm("AES_CBC_PKCS7");
+            var newPassword = password;
+            // make sure we satify minimum length requirements 
+            while (newPassword.Length < provider.BlockLength)
+            {
+                newPassword = newPassword + password;
+            }
+            var buffer = CryptographicBuffer.ConvertStringToBinary(
+              newPassword, BinaryStringEncoding.Utf8);
+            buffer.Length = provider.BlockLength;
+            var key = provider.CreateSymmetricKey(buffer);
+            return key;
+        }
+    }
+
+    public class EncryptionHelper
+    {
+        /// <summary> 
+        /// Encrypt a string 
+        /// </summary> 
+        /// <param name="input">String to encrypt</param> 
+        /// <param name="password">Password to use for encryption</param> 
+        /// <returns>Encrypted string</returns> 
+        public string Encrypt(string input, string keyValue, string ivKey)
+        {
+            IBuffer encrypted = null;
+            IBuffer decrypted;
+            IBuffer iv = null;
+            IBuffer data;
+            //IBuffer nonce;
+            String algName = SymmetricAlgorithmNames.AesCbcPkcs7;
+
+            CryptographicKey key = null;
+            key = GenerateSymmetricKey();
+            data = GenearetData(keyValue);
+
+            // CBC mode needs Initialization vector, here just random data.
+            // IV property will be set on "Encrypted".
+            if (algName.Contains("CBC"))
+            {
+                SymmetricKeyAlgorithmProvider algorithm = SymmetricKeyAlgorithmProvider.OpenAlgorithm(algName);
+                //iv = CryptographicBuffer.GenerateRandom(algorithm.BlockLength); //Original...
+                iv = CryptographicBuffer.CreateFromByteArray(UTF8Encoding.UTF8.GetBytes(ivKey)); //New added for ivkey
+            }
+
+            // Encrypt the data.
+            try
+            {
+                encrypted = CryptographicEngine.Encrypt(key, data, iv);
+            }
+            catch (ArgumentException ex)
+            {
+               // return;
+            }
+
+            // Decrypt the data.
+            decrypted = CryptographicEngine.Decrypt(key, encrypted, iv);
+
+            if (!CryptographicBuffer.Compare(decrypted, data))
+            {
+               // return;
+            }
+            return CryptographicBuffer.EncodeToBase64String(encrypted);
+        }
+        private CryptographicKey GenerateSymmetricKey()
+        {
+            String algName = SymmetricAlgorithmNames.AesCbcPkcs7;
+            UInt32 keySize = 128 / 8;
+
+            CryptographicKey key;
+            // Create an SymmetricKeyAlgorithmProvider object for the algorithm specified on input.
+            SymmetricKeyAlgorithmProvider Algorithm = SymmetricKeyAlgorithmProvider.OpenAlgorithm(algName);
+
+            // Generate a symmetric key.
+            IBuffer keymaterial = CryptographicBuffer.GenerateRandom(keySize);
+            try
+            {
+                key = Algorithm.CreateSymmetricKey(keymaterial);
+            }
+            catch (ArgumentException ex)
+            {
+                return null;
+            }
+            return key;
+        }
+
+        private IBuffer GenearetData(string keyValue)
+        {
+            IBuffer data;
+            //String cookie = "Data to encrypt "; // Original..
+            String cookie = keyValue;
+            data = CryptographicBuffer.ConvertStringToBinary(cookie, BinaryStringEncoding.Utf8);
+            return data;
         }
     }
 }

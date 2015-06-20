@@ -1,4 +1,7 @@
 ﻿using ICICIMerchant.Common;
+using ICICIMerchant.DBHelper;
+using ICICIMerchant.Helper;
+using ICICIMerchant.Model;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -7,6 +10,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Graphics.Display;
+using Windows.UI.Popups;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -129,6 +133,46 @@ namespace ICICIMerchant.View
                 default:
                     break;
             }
+        }
+
+        private void btnLastStatement_Click(object sender, RoutedEventArgs e)
+        {
+            var postData = "tid=" + EncryptionProvider.Encrypt(((LoginModel)SuspensionManager.SessionState["loginModel"]).TID, DBHandler.key1, DBHandler.ivKey)
+                     + "&type=" + EncryptionProvider.Encrypt("st", DBHandler.key1, DBHandler.ivKey) + "&origin=" + EncryptionProvider.Encrypt("mobile", DBHandler.key1, DBHandler.ivKey) + "&subType=" + EncryptionProvider.Encrypt("LS", DBHandler.key1, DBHandler.ivKey);
+            var lastStatement = MakeHttpWebRequestPostCall.Generic_With_Token(postData, DBHandler.url + DBHandler.lastStatement_url_paddup);
+            //MessageDialog msgDlg = new MessageDialog("LS is " + lastStatement.Result);
+            //await msgDlg.ShowAsync();
+
+        }
+
+        private void btnStatementOfDateRange_Click(object sender, RoutedEventArgs e)
+        {
+           var postData = "tid="
+                                                        + EncryptionProvider.Encrypt(((LoginModel)SuspensionManager.SessionState["loginModel"]).TID, DBHandler.key1, DBHandler.ivKey)
+                                                        + "&type=" + EncryptionProvider.Encrypt("st", DBHandler.key1, DBHandler.ivKey) + "&origin=" + EncryptionProvider.Encrypt("mobile", DBHandler.key1, DBHandler.ivKey) + "&subType=" + EncryptionProvider.Encrypt("SODR", DBHandler.key1, DBHandler.ivKey) + "&fromDate="
+                                                        + EncryptionProvider.Encrypt(dtSODRFrom.Date.ToString(), DBHandler.key1, DBHandler.ivKey)
+                                                        + "&toDate="
+                                                        + EncryptionProvider.Encrypt(dtSODRTo.Date.ToString(), DBHandler.key1, DBHandler.ivKey);
+                        var lastStatement = MakeHttpWebRequestPostCall.Generic_With_Token(postData, DBHandler.url + DBHandler.lastStatement_url_paddup);
+            //MessageDialog msgDlg = new MessageDialog("LS is " + lastStatement.Result);
+            //await msgDlg.ShowAsync();
+
+
+        }
+
+        private void btnPrintedStatement_Click(object sender, RoutedEventArgs e)
+        {
+            var postData = "tid="
+                                             + EncryptionProvider.Encrypt(((LoginModel)SuspensionManager.SessionState["loginModel"]).TID, DBHandler.key1, DBHandler.ivKey)
+                                             + "&type=" + EncryptionProvider.Encrypt("st", DBHandler.key1, DBHandler.ivKey) + "&origin=" + EncryptionProvider.Encrypt("mobile", DBHandler.key1, DBHandler.ivKey) + "&subType=" + EncryptionProvider.Encrypt("PS", DBHandler.key1, DBHandler.ivKey) + "&fromDate="
+                                             + EncryptionProvider.Encrypt(dtPSFrom.Date.ToString(), DBHandler.key1, DBHandler.ivKey)
+                                             + "&toDate="
+                                             + EncryptionProvider.Encrypt(dtPSTo.Date.ToString(), DBHandler.key1, DBHandler.ivKey);
+            var lastStatement = MakeHttpWebRequestPostCall.Generic_With_Token(postData, DBHandler.url + DBHandler.lastStatement_url_paddup);
+
+            //MessageDialog msgDlg = new MessageDialog("LS is " + lastStatement.Result);
+            //await msgDlg.ShowAsync();
+
         }
     }
 }

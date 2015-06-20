@@ -50,17 +50,20 @@
             <TextBox
                 PlaceholderText="Enter your Ticket No."
                 InputScope="Number"
+                x:Name="txtEnterYourTicketNo"
                 Grid.Row="1"/>
 
             <Button
                 HorizontalAlignment="Center"
                 Grid.Row="2"
                 x:Name="btnSubmit"
+                Click="btnSubmit_Click"
                 Content="Submit"/>
            
             <Button
                 HorizontalAlignment="Center"
                 Grid.Row="3"
+                Click="btnLastTicketHistory_Click"
                 x:Name="btnLastTicketHistory"
                 Content="Last Ticket History"/>
        
@@ -70,10 +73,10 @@
         <Image 
             VerticalAlignment="Bottom"
             Grid.Row="2"
-            Height="40"
-            Width="480"
+            Height="50"
+            Width="Auto"
             Grid.ColumnSpan="2"
             Source="ms-appx:///Assets/first-data-logo.png"
-            Margin="0 0 0 5"/>
+            Margin="0 0 0 0"/>
     </Grid>
 </Page>

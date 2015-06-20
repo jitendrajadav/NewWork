@@ -1,4 +1,6 @@
-﻿using ICICIMerchant.Helper;
+﻿using ICICIMerchant.Common;
+using ICICIMerchant.Helper;
+using ICICIMerchant.Model;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -17,22 +19,21 @@ namespace ICICIMerchant.DBHelper
         /// <param name="model">Class objcet</param>
         /// <param name="methodName">method name for e.g essayFeedbackRequest</param>
         /// <returns></returns>
-        public static async Task<string> Login(object model)
+        public static async Task<string> Login(string data,string url)
         {
-        callAgain:
             string responseResutl = string.Empty;
             try
             {
-                var webRequest = (HttpWebRequest)WebRequest.Create(DBHandler.url + DBHandler.login_url_paddup);
+                var webRequest = (HttpWebRequest)WebRequest.Create(url);
                 webRequest.Method = "POST";
                 
                 webRequest.ContentType = "application/x-www-form-urlencoded";
-               // webRequest.ContentType = "application/json; charset=utf-8";
+                //webRequest.ContentType = "application/json; charset=utf-8";
                 //var Serialized = SerializeDeserialize.Serialize(model);
                 //string finalSerialized = model.ToString();//Serialized;
                 using (StreamWriter sw = new StreamWriter(await webRequest.GetRequestStreamAsync()))
                 {
-                    sw.Write(model);
+                    sw.Write(data);
                 }
 
                 HttpWebResponse httpWebResponse = await webRequest.GetResponseAsync() as HttpWebResponse;
@@ -48,13 +49,51 @@ namespace ICICIMerchant.DBHelper
             }
             catch (Exception ex)
             {
-                if (ex.Message.Contains("The request was aborted: Could not create SSL/TLS secure channel."))
-                    goto callAgain;
-                throw ex;
+                return responseResutl;
             }
         }
 
-        public async static Task<string> Login(string data, string url)
+        /// <summary>
+        /// Post method for request and responce for every method 
+        /// </summary>
+        /// <param name="model">Class objcet</param>
+        /// <param name="methodName">method name for e.g essayFeedbackRequest</param>
+        /// <returns></returns>
+        public static async Task<string> Generic_With_Token(string data, string url)
+        {
+            string responseResutl = string.Empty;
+            try
+            {
+                var webRequest = (HttpWebRequest)WebRequest.Create(url);
+                webRequest.Method = "POST";
+                webRequest.ContentType = "application/x-www-form-urlencoded";
+                webRequest.Headers["Authorization"] = "bearer " + ((LoginModel)SuspensionManager.SessionState["loginModel"]).access_token;
+                //webRequest.ContentType = "application/json; charset=utf-8";
+                //var Serialized = SerializeDeserialize.Serialize(model);
+                //string finalSerialized = model.ToString();//Serialized;
+                using (StreamWriter sw = new StreamWriter(await webRequest.GetRequestStreamAsync()))
+                {
+                    sw.Write(data);
+                }
+
+                HttpWebResponse httpWebResponse = await webRequest.GetResponseAsync() as HttpWebResponse;
+                using (StreamReader sr = new StreamReader(httpWebResponse.GetResponseStream()))
+                {
+                    if (httpWebResponse.StatusCode != System.Net.HttpStatusCode.Accepted)
+                    {
+                        string messageresult = String.Format("POST failed. Received HTTP {0}", httpWebResponse.StatusCode);
+                    }
+                    responseResutl = sr.ReadToEnd();
+                }
+                return responseResutl;
+            }
+            catch (Exception ex)
+            {
+                return responseResutl;
+            }
+        }
+
+        public async static Task<string> Login(string data, string url,string key)
         {
             string rawServerResponse = null;
             WebRequest webRequest = WebRequest.Create(DBHandler.url + DBHandler.login_url_paddup);

@@ -20,7 +20,6 @@ namespace ICICIMerchant.Helper
             CryptographicKey AES;
             HashAlgorithmProvider HAP = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Md5);
             CryptographicHash Hash_AES = HAP.CreateHash();
-
             string encrypted = "";
             try
             {
@@ -251,19 +250,18 @@ namespace ICICIMerchant.Helper
         /// <param name="input">String to encrypt</param> 
         /// <param name="password">Password to use for encryption</param> 
         /// <returns>Encrypted string</returns> 
-        public static string Encrypt(string input, string password)
+        public static string Encrypt(string input, string keyValue, string ivValue)
         {
             //make sure we have data to work with 
             if (string.IsNullOrEmpty(input))
                 throw new ArgumentException("input cannot be empty");
-            if (string.IsNullOrEmpty(password))
+            if (string.IsNullOrEmpty(keyValue))
                 throw new ArgumentException("password cannot be empty");
             // get IV, key and encrypt 
-            var iv = CreateInitializationVector(DBHandler.ivKey);
-            var key = CreateKey(DBHandler.key1);
-            var encryptedBuffer = CryptographicEngine.Encrypt(
-              key, CryptographicBuffer.ConvertStringToBinary(input, BinaryStringEncoding.Utf8), iv);
-            return CryptographicBuffer.EncodeToBase64String(encryptedBuffer);
+            var iv = CreateInitializationVector(ivValue);
+            var key = CreateKey(keyValue);
+            var encryptedBuffer = CryptographicEngine.Encrypt(key, CryptographicBuffer.ConvertStringToBinary(input, BinaryStringEncoding.Utf8), iv);
+            return System.Net.WebUtility.UrlEncode(CryptographicBuffer.EncodeToBase64String(encryptedBuffer));
         }
         /// <summary> 
         /// Decrypt a string previously ecnrypted with Encrypt method and the same password 
@@ -302,8 +300,7 @@ namespace ICICIMerchant.Helper
                 newPassword = newPassword + password;
             }
             //create vecotr 
-            var iv = CryptographicBuffer.CreateFromByteArray(
-              UTF8Encoding.UTF8.GetBytes(newPassword));
+            var iv = CryptographicBuffer.CreateFromByteArray(UTF8Encoding.UTF8.GetBytes(newPassword));
             return iv;
         }
         /// <summary> 
@@ -320,8 +317,7 @@ namespace ICICIMerchant.Helper
             {
                 newPassword = newPassword + password;
             }
-            var buffer = CryptographicBuffer.ConvertStringToBinary(
-              newPassword, BinaryStringEncoding.Utf8);
+            var buffer = CryptographicBuffer.ConvertStringToBinary(newPassword, BinaryStringEncoding.Utf8);
             buffer.Length = provider.BlockLength;
             var key = provider.CreateSymmetricKey(buffer);
             return key;
@@ -346,15 +342,15 @@ namespace ICICIMerchant.Helper
             String algName = SymmetricAlgorithmNames.AesCbcPkcs7;
 
             CryptographicKey key = null;
-            key = GenerateSymmetricKey();
-            data = GenearetData(keyValue);
+            key = GenerateSymmetricKey(keyValue);
+            data = GenearetData(input);
 
             // CBC mode needs Initialization vector, here just random data.
             // IV property will be set on "Encrypted".
             if (algName.Contains("CBC"))
             {
                 SymmetricKeyAlgorithmProvider algorithm = SymmetricKeyAlgorithmProvider.OpenAlgorithm(algName);
-                //iv = CryptographicBuffer.GenerateRandom(algorithm.BlockLength); //Original...
+                //iv = CryptographicBuffer.GenerateRandom(algorithm.BlockLength);//Original.
                 iv = CryptographicBuffer.CreateFromByteArray(UTF8Encoding.UTF8.GetBytes(ivKey)); //New added for ivkey
             }
 
@@ -375,9 +371,9 @@ namespace ICICIMerchant.Helper
             {
                // return;
             }
-            return CryptographicBuffer.EncodeToBase64String(encrypted);
+            return System.Net.WebUtility.UrlEncode(CryptographicBuffer.EncodeToBase64String(encrypted));
         }
-        private CryptographicKey GenerateSymmetricKey()
+        private CryptographicKey GenerateSymmetricKey(string keyValue)
         {
             String algName = SymmetricAlgorithmNames.AesCbcPkcs7;
             UInt32 keySize = 128 / 8;
@@ -385,12 +381,14 @@ namespace ICICIMerchant.Helper
             CryptographicKey key;
             // Create an SymmetricKeyAlgorithmProvider object for the algorithm specified on input.
             SymmetricKeyAlgorithmProvider Algorithm = SymmetricKeyAlgorithmProvider.OpenAlgorithm(algName);
-
             // Generate a symmetric key.
-            IBuffer keymaterial = CryptographicBuffer.GenerateRandom(keySize);
+            IBuffer keymaterial = CryptographicBuffer.ConvertStringToBinary(keyValue,BinaryStringEncoding.Utf8);
+            //IBuffer keymaterial1 = CryptographicBuffer.GenerateRandom(keySize);
+
             try
             {
-                key = Algorithm.CreateSymmetricKey(keymaterial);
+                key = Algorithm.CreateSymmetricKey(keymaterial);// Original.
+                //key = Algorithm.CreateSymmetricKey(CryptographicBuffer.CreateFromByteArray(UTF8Encoding.UTF8.GetBytes(keyValue)));
             }
             catch (ArgumentException ex)
             {
@@ -399,11 +397,11 @@ namespace ICICIMerchant.Helper
             return key;
         }
 
-        private IBuffer GenearetData(string keyValue)
+        private IBuffer GenearetData(string input)
         {
             IBuffer data;
             //String cookie = "Data to encrypt "; // Original..
-            String cookie = keyValue;
+            String cookie = input;
             data = CryptographicBuffer.ConvertStringToBinary(cookie, BinaryStringEncoding.Utf8);
             return data;
         }

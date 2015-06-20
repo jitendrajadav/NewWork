@@ -68,10 +68,10 @@
         <Image 
             VerticalAlignment="Bottom"
             Grid.Row="2"
-            Height="40"
-            Width="480"
+            Height="50"
+            Width="Auto"
             Grid.ColumnSpan="2"
             Source="ms-appx:///Assets/first-data-logo.png"
-            Margin="0 0 0 5"/>
+            Margin="0 0 0 0"/>
     </Grid>
 </Page>

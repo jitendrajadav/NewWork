@@ -22,22 +22,22 @@
                 <RowDefinition/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
+            
             <Image
                 HorizontalAlignment="Left"
                 Height="80" 
                 Margin="10 0 0 0"
-                Source="ms-appx:///Assets/LightGray.png"
-                />
+                Source="ms-appx:///Assets/LightGray.png"/>
             <TextBox
-            x:Name="txtUsername"
-            PlaceholderText="TID"
-            InputScope="Number"
-            Grid.Row="1"/>
+                x:Name="txtUsername"
+                PlaceholderText="TID"
+                InputScope="Number"
+                Grid.Row="1"/>
 
             <PasswordBox 
-            PlaceholderText="TPIN"
-            x:Name="pwdPassword"
-            Grid.Row="2"/>
+                PlaceholderText="TPIN"
+                x:Name="pwdPassword"
+                Grid.Row="2"/>
 
             <Button Content="Login" 
                 x:Name="btnLogin"
@@ -49,10 +49,10 @@
         <Image 
             VerticalAlignment="Bottom"
             Grid.Row="2"
-            Height="40"
-            Width="480"
+            Height="50"
+            Width="Auto"
             Grid.ColumnSpan="1"
             Source="ms-appx:///Assets/first-data-logo.png"
-            Margin="0 0 0 5"/>
+            Margin="0 0 0 0"/>
     </Grid>
 </Page>

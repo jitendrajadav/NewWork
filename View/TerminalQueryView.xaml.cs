@@ -1,4 +1,7 @@
 ﻿using ICICIMerchant.Common;
+using ICICIMerchant.DBHelper;
+using ICICIMerchant.Helper;
+using ICICIMerchant.Model;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -7,6 +10,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Graphics.Display;
+using Windows.UI.Popups;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -27,7 +31,8 @@ namespace ICICIMerchant.View
     {
         private NavigationHelper navigationHelper;
         private ObservableDictionary defaultViewModel = new ObservableDictionary();
-
+        string terminalQueryValue = string.Empty;
+        string terminalQueryErrorMessageValue = string.Empty;
         public TerminalQueryView()
         {
             this.InitializeComponent();
@@ -108,9 +113,60 @@ namespace ICICIMerchant.View
 
         #endregion
 
-        private void btnSubmit_Click(object sender, RoutedEventArgs e)
+        private async void btnSubmit_Click(object sender, RoutedEventArgs e)
         {
+            string postData = string.Empty;
+            if (terminalQueryValue == "Error message")
+            {
+                postData = "tid="
+                   + EncryptionProvider.Encrypt(((LoginModel)SuspensionManager.SessionState["loginModel"]).TID, DBHandler.key1, DBHandler.ivKey)
+                   + "&type=" + EncryptionProvider.Encrypt("tr", DBHandler.key1, DBHandler.ivKey)
+                   + "&origin=" + EncryptionProvider.Encrypt("mobile", DBHandler.key1, DBHandler.ivKey)
+                   + "&subType=" + EncryptionProvider.Encrypt(terminalQueryValue, DBHandler.key1, DBHandler.ivKey)
+                   + "&emSubType=" + EncryptionProvider.Encrypt(terminalQueryErrorMessageValue, DBHandler.key1, DBHandler.ivKey)
+                   + "&alternateNo=" + EncryptionProvider.Encrypt(txtAlternameNo.Text, DBHandler.key1, DBHandler.ivKey)
+                   + "&contactPerson=" + EncryptionProvider.Encrypt(txtAlternameName.Text, DBHandler.key1, DBHandler.ivKey)
+                   + "&contactAddress=" + EncryptionProvider.Encrypt(txtAddress.Text, DBHandler.key1, DBHandler.ivKey)
+                   + "&prefDate=" + EncryptionProvider.Encrypt(dtEMD.Date.ToString(), DBHandler.key1, DBHandler.ivKey)
+                   + "&caseDescription=" + EncryptionProvider.Encrypt(txtIssueDescription.Text, DBHandler.key1, DBHandler.ivKey);
+            }
+            else
+            {
+                postData = "tid="
+                 + EncryptionProvider.Encrypt(((LoginModel)SuspensionManager.SessionState["loginModel"]).TID, DBHandler.key1, DBHandler.ivKey)
+                 + "&type=" + EncryptionProvider.Encrypt("tr", DBHandler.key1, DBHandler.ivKey)
+                 + "&origin=" + EncryptionProvider.Encrypt("mobile", DBHandler.key1, DBHandler.ivKey)
+                 + "&subType=" + EncryptionProvider.Encrypt(terminalQueryValue, DBHandler.key1, DBHandler.ivKey)
+                 + "&alternateNo=" + EncryptionProvider.Encrypt(txtAlternameNo.Text, DBHandler.key1, DBHandler.ivKey)
+                 + "&contactPerson=" + EncryptionProvider.Encrypt(txtAlternameName.Text, DBHandler.key1, DBHandler.ivKey)
+                 + "&contactAddress=" + EncryptionProvider.Encrypt(txtAddress.Text, DBHandler.key1, DBHandler.ivKey)
+                 + "&prefDate=" + EncryptionProvider.Encrypt(dtEMD.Date.ToString(), DBHandler.key1, DBHandler.ivKey)
+                 + "&caseDescription=" + EncryptionProvider.Encrypt(txtIssueDescription.Text, DBHandler.key1, DBHandler.ivKey);
+            }
+            var terminalQueryResult = MakeHttpWebRequestPostCall.Generic_With_Token(postData, DBHandler.url + DBHandler.terminal_url_paddup);
+            MessageDialog msgDlg = new MessageDialog("Result is " + terminalQueryResult.Result);
+            await msgDlg.ShowAsync();
+           
+            terminalQueryErrorMessageValue = string.Empty;
+            terminalQueryValue = string.Empty;
+        }
 
+        private void cmbTerminalQuery_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (((ComboBoxItem)e.AddedItems[0]).Content.ToString().ToLower()  == "Error message".ToLower())
+            {
+                cmbTerminalQueryErrorMessage.Visibility = Windows.UI.Xaml.Visibility.Visible;
+            }
+            else
+            {
+                cmbTerminalQueryErrorMessage.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            }
+            terminalQueryValue = ((ComboBoxItem)e.AddedItems[0]).Content.ToString();
+        }
+
+        private void cmbTerminalQueryErrorMessage_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            terminalQueryErrorMessageValue = ((ComboBoxItem)e.AddedItems[0]).Content.ToString();
         }
     }
 }

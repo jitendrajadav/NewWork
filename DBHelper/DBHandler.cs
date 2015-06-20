@@ -10,12 +10,19 @@ namespace ICICIMerchant.DBHelper
     {
         public static string url = "https://pg.icicims.com/imswebservices/";
         public static string login_url_paddup = "oauth/token";
+        public static string paperroll_url_paddup = "fdindia/case/casecreation";
+        public static string lastStatement_url_paddup = "fdindia/case/casecreation";
+        public static string terminal_url_paddup = "fdindia/case/casecreation";
+        public static string lastTicketHistory_url_paddup = "fdindia/case/history/caseHistory";
+        public static string prevTicketHistory_url_paddup = "fdindia/case/casestatus";
+        //public static string lastTicketHistory_url_paddup = "fdindia/case/history/caseHistory";
+        //public static string prevTicketHistory_url_paddup = "fdindia/case/casestatus";
+        //public static string lastTicketHistory_url_paddup = "fdindia/case/history/caseHistory";
+        //public static string prevTicketHistory_url_paddup = "fdindia/case/casestatus";
+
         public static string key1 = "tejoratechonolog";
         public static string key2 = "tejorafdindiatec";
         public static string ivKey = "icicimerchatserv";
 
-        //var key1 = CryptoJS.enc.Utf8.parse('tejoratechonolog');
-        //var ivKey = CryptoJS.enc.Utf8.parse('icicimerchatserv');
-        //var key2 = CryptoJS.enc.Utf8.parse('tejorafdindiatec');
     }
 }

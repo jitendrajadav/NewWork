@@ -25,8 +25,8 @@
         <!-- Header Panel -->
         <Image 
             VerticalAlignment="Top"
-            Height="40"
-            Width="480"
+            Height="50"
+            Width="Auto"
             Grid.ColumnSpan="2"
             Source="ms-appx:///Assets/first-data-logo.png"/>
 
@@ -76,6 +76,8 @@
                 <Button
                     Grid.Row="1"
                     HorizontalAlignment="Center"
+                    x:Name="btnLastStatement"
+                    Click="btnLastStatement_Click"
                     VerticalAlignment="Center"
                     Content="Submit"/>
             </Grid>
@@ -89,14 +91,18 @@
                     <RowDefinition/>
                 </Grid.RowDefinitions>
                 <DatePicker
+                    x:Name="dtSODRFrom"
                     Header="From Date"/>
                 <DatePicker
                     Grid.Row="1"
+                    x:Name="dtSODRTo"
                     Header="To Date"/>
                 <Button
                     Grid.Row="2"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
+                    x:Name="btnStatementOfDateRange"
+                    Click="btnStatementOfDateRange_Click"
                     Content="Submit"/>
             </Grid>
 
@@ -116,14 +122,18 @@
                     TextWrapping="Wrap"/>
                 <DatePicker
                     Grid.Row="1"
+                    x:Name="dtPSFrom"
                     Header="From Date"/>
                 <DatePicker
                     Grid.Row="2"
+                    x:Name="dtPSTo"
                     Header="To Date"/>
                 <Button
                     Grid.Row="3"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
+                    x:Name="btnPrintedStatement"
+                    Click="btnPrintedStatement_Click"
                     Content="Submit"/>
             </Grid>
 
@@ -133,10 +143,10 @@
         <Image 
             VerticalAlignment="Bottom"
             Grid.Row="2"
-            Height="40"
-            Width="480"
+            Height="50"
+            Width="Auto"
             Grid.ColumnSpan="2"
             Source="ms-appx:///Assets/first-data-logo.png"
-            Margin="0 0 0 5"/>
+            Margin="0 0 0 0"/>
     </Grid>
 </Page>

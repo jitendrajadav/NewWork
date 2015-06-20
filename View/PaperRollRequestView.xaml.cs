@@ -1,4 +1,7 @@
 ﻿using ICICIMerchant.Common;
+using ICICIMerchant.DBHelper;
+using ICICIMerchant.Helper;
+using ICICIMerchant.Model;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -7,6 +10,8 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Graphics.Display;
+using Windows.UI.Popups;
+using Windows.UI.Text;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -108,9 +113,32 @@ namespace ICICIMerchant.View
 
         #endregion
 
-        private void btnSubmit_Click(object sender, RoutedEventArgs e)
+        private async void btnSubmit_Click(object sender, RoutedEventArgs e)
         {
+            //string temp;
+            //// Do not ask for RTF here, we just want the raw text
+            //txtAddress.Document.GetText(TextGetOptions.None, out temp);
+            //var range = txtAddress.Document.GetRange(0, temp.Length - 1);
 
+            //string content;
+            //// Ask for RTF here, if desired.
+            //range.GetText(TextGetOptions.FormatRtf, out content);
+
+            var postData = "tid="
+               + EncryptionProvider.Encrypt(((LoginModel)SuspensionManager.SessionState["loginModel"]).TID, DBHandler.key1, DBHandler.ivKey)
+               + "&type=" + EncryptionProvider.Encrypt("pr", DBHandler.key1, DBHandler.ivKey)
+               + "&origin=" + EncryptionProvider.Encrypt("mobile", DBHandler.key1, DBHandler.ivKey) + "&rollcount="
+               + EncryptionProvider.Encrypt(txtNoOfRolls.Text, DBHandler.key1, DBHandler.ivKey)
+               + "&alternateNo="
+               + EncryptionProvider.Encrypt(txtAlternateContactNo.Text, DBHandler.key1, DBHandler.ivKey)
+               + "&contactPerson="
+               + EncryptionProvider.Encrypt(txtAlternateName.Text, DBHandler.key1, DBHandler.ivKey)
+               + "&contactAddress="
+               + EncryptionProvider.Encrypt(txtAddress.Text, DBHandler.key1, DBHandler.ivKey);
+
+            var paperRollResult = MakeHttpWebRequestPostCall.Generic_With_Token(postData, DBHandler.url + DBHandler.paperroll_url_paddup);
+            MessageDialog msgDlg = new MessageDialog("Result is " + paperRollResult.Result);
+            await msgDlg.ShowAsync();
         }
     }
 }

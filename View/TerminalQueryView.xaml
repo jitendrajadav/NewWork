@@ -25,13 +25,14 @@
         <!-- Header Panel -->
         <Image 
             VerticalAlignment="Top"
-            Height="40"
-            Width="480"
+            Height="50"
+            Width="Auto"
             Grid.ColumnSpan="2"
             Source="ms-appx:///Assets/first-data-logo.png"/>
         
         <Grid VerticalAlignment="Center" Grid.Row="1">
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -49,47 +50,57 @@
                 Style="{ThemeResource TitleTextBlockStyle}" Margin="0,12,0,0"/>
 
             <!--TODO: Content should be placed within the following grid-->
-            <ComboBox Grid.Row="1">
-                <ComboBoxItem 
-                Content="Card not accepting"/>
-                <ComboBoxItem 
-                Content="Printer not working"/>
-                <ComboBoxItem 
-                Content="No Power"/>
-                <ComboBoxItem 
-                Content="Unable to Settle"/>
-                <ComboBoxItem 
-                Content="Error message"/>
-                <ComboBoxItem 
-                Content="Others"/>
+            <ComboBox Grid.Row="1" 
+                      x:Name="cmbTerminalQuery" 
+                      SelectionChanged="cmbTerminalQuery_SelectionChanged">
+                <ComboBoxItem Content="Card not accepting"/>
+                <ComboBoxItem Content="Printer not working"/>
+                <ComboBoxItem Content="No Power"/>
+                <ComboBoxItem Content="Unable to Settle"/>
+                <ComboBoxItem Content="Error message"/>
+                <ComboBoxItem Content="Others"/>
+            </ComboBox>
+
+            <ComboBox Grid.Row="2" 
+                      Visibility="Collapsed"
+                      x:Name="cmbTerminalQueryErrorMessage" 
+                      SelectionChanged="cmbTerminalQueryErrorMessage_SelectionChanged">
+                <ComboBoxItem Content="Connectivity error"/>
+                <ComboBoxItem Content="No line"/>
+                <ComboBoxItem Content="Try again line busy"/>
             </ComboBox>
 
             <TextBox
+                x:Name="txtAlternameNo"
                 PlaceholderText="Alternate No"
                 InputScope="Number"
-                Grid.Row="2"/>
-
-            <TextBox
-                PlaceholderText="Alternate Name"
                 Grid.Row="3"/>
 
-            <RichEditBox
-                PlaceholderText="Address"
-                Height="100"
+            <TextBox
+                x:Name="txtAlternameName"
+                PlaceholderText="Alternate Name"
                 Grid.Row="4"/>
 
-            <DatePicker
-                Header="Expectected Meeting Date"
+            <TextBox
+                PlaceholderText="Address"
+                Height="100"
+                x:Name="txtAddress"
                 Grid.Row="5"/>
+
+            <DatePicker
+                x:Name="dtEMD"
+                Header="Expectected Meeting Date"
+                Grid.Row="6"/>
 
             <TextBox
                 Height="75"
+                x:Name="txtIssueDescription"
                 PlaceholderText="Issue Description"
-                Grid.Row="6"/>
+                Grid.Row="7"/>
 
             <Button
                 HorizontalAlignment="Center"
-                Grid.Row="7"
+                Grid.Row="8"
                 x:Name="btnSubmit"
                 Click="btnSubmit_Click"
                 Content="Submit"/>
@@ -99,10 +110,10 @@
         <Image 
             VerticalAlignment="Bottom"
             Grid.Row="2"
-            Height="40"
-            Width="480"
+            Height="50"
+            Width="Auto"
             Grid.ColumnSpan="2"
             Source="ms-appx:///Assets/first-data-logo.png"
-            Margin="0 0 0 5"/>
+            Margin="0 0 0 0"/>
     </Grid>
 </Page>

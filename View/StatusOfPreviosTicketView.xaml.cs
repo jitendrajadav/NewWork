@@ -1,4 +1,7 @@
 ﻿using ICICIMerchant.Common;
+using ICICIMerchant.DBHelper;
+using ICICIMerchant.Helper;
+using ICICIMerchant.Model;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -7,6 +10,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Graphics.Display;
+using Windows.UI.Popups;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -107,5 +111,21 @@ namespace ICICIMerchant.View
         }
 
         #endregion
+
+        private async void btnSubmit_Click(object sender, RoutedEventArgs e)
+        {
+            var postData = "caseNumber=" + EncryptionProvider.Encrypt(txtEnterYourTicketNo.Text, DBHandler.key1, DBHandler.ivKey);
+            var prevStatusTicketResult = MakeHttpWebRequestPostCall.Generic_With_Token(postData, DBHandler.url + DBHandler.prevTicketHistory_url_paddup);
+            MessageDialog msgDlg = new MessageDialog("Result is " + prevStatusTicketResult.Result);
+            await msgDlg.ShowAsync();
+        }
+
+        private async void btnLastTicketHistory_Click(object sender, RoutedEventArgs e)
+        {
+            var postData = "tid=" + EncryptionProvider.Encrypt(((LoginModel)SuspensionManager.SessionState["loginModel"]).TID, DBHandler.key1, DBHandler.ivKey);
+            var prevStatusTicketResult = MakeHttpWebRequestPostCall.Generic_With_Token(postData, DBHandler.url + DBHandler.lastTicketHistory_url_paddup);
+            MessageDialog msgDlg = new MessageDialog("Result is " + prevStatusTicketResult.Result);
+            await msgDlg.ShowAsync();
+        }
     }
 }

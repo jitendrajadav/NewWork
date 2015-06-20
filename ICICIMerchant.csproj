@@ -94,6 +94,7 @@
       <DependentUpon>HubPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Model\HomeModel.cs" />
+    <Compile Include="Model\LoginModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModel\HomeViewModel.cs" />
     <Compile Include="View\AgreementView.xaml.cs">

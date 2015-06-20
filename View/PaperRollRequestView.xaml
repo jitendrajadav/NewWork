@@ -50,21 +50,27 @@
 
             <TextBox
                 InputScope="Number"
+                x:Name="txtNoOfRolls"
                 PlaceholderText="No Of Rolls"
                 Grid.Row="1"/>
 
             <TextBox
                 InputScope="Number"
+                x:Name="txtAlternateContactNo"
                 PlaceholderText="Alternate Contact No"
                 Grid.Row="2"/>
 
             <TextBox
                 PlaceholderText="Alternate Name"
+                x:Name="txtAlternateName"
                 Grid.Row="3"/>
 
 
-            <RichEditBox
+            <TextBox
                 PlaceholderText="Address"
+                x:Name="txtAddress"
+                TextWrapping="Wrap"
+                Width="Auto"
                 Height="100"
                 Grid.Row="4"/>
 
@@ -80,10 +86,10 @@
         <Image 
             VerticalAlignment="Bottom"
             Grid.Row="2"
-            Height="40"
-            Width="480"
+            Height="50"
+            Width="Auto"
             Grid.ColumnSpan="2"
             Source="ms-appx:///Assets/first-data-logo.png"
-            Margin="0 0 0 5"/>
+            Margin="0 0 0 0"/>
     </Grid>
 </Page>

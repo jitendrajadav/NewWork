@@ -20,13 +20,13 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
        
-        <Image 
+        <Border
             VerticalAlignment="Top"
             Grid.Row="0"
             Height="40"
-            Width="480"
+            Width="400"
             Grid.ColumnSpan="2"
-            Source="ms-appx:///Assets/first-data-logo.png"
+            Background="#e97720"
             HorizontalAlignment="Center"/>
 
         <WebView 
@@ -50,13 +50,13 @@
             Grid.Column="1"
             Content="Cancel"/>
       
-        <Image 
+        <Border 
             VerticalAlignment="Bottom"
             Grid.Row="3"
             Height="40"
             Width="480"
             Grid.ColumnSpan="2"
-            Source="ms-appx:///Assets/first-data-logo.png"
+            Background="#e97720"
             HorizontalAlignment="Center"
             Margin="0 0 0 5"/>
 

@@ -3,22 +3,10 @@ using ICICIMerchant.DBHelper;
 using ICICIMerchant.Helper;
 using ICICIMerchant.Model;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.Graphics.Display;
+using System.Threading.Tasks;
 using Windows.UI.Popups;
-using Windows.UI.Text;
-using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
 // The Basic Page item template is documented at http://go.microsoft.com/fwlink/?LinkID=390556
@@ -123,22 +111,66 @@ namespace ICICIMerchant.View
             //string content;
             //// Ask for RTF here, if desired.
             //range.GetText(TextGetOptions.FormatRtf, out content);
+            string postData = string.Empty;
 
-            var postData = "tid="
-               + EncryptionProvider.Encrypt(((LoginModel)SuspensionManager.SessionState["loginModel"]).TID, DBHandler.key1, DBHandler.ivKey)
-               + "&type=" + EncryptionProvider.Encrypt("pr", DBHandler.key1, DBHandler.ivKey)
-               + "&origin=" + EncryptionProvider.Encrypt("mobile", DBHandler.key1, DBHandler.ivKey) + "&rollcount="
-               + EncryptionProvider.Encrypt(txtNoOfRolls.Text, DBHandler.key1, DBHandler.ivKey)
-               + "&alternateNo="
-               + EncryptionProvider.Encrypt(txtAlternateContactNo.Text, DBHandler.key1, DBHandler.ivKey)
-               + "&contactPerson="
-               + EncryptionProvider.Encrypt(txtAlternateName.Text, DBHandler.key1, DBHandler.ivKey)
-               + "&contactAddress="
-               + EncryptionProvider.Encrypt(txtAddress.Text, DBHandler.key1, DBHandler.ivKey);
+            try
+            {
+                postData = "tid="
+                      + EncryptionProvider.Encrypt(((LoginModel)SuspensionManager.SessionState["loginModel"]).TID, DBHandler.key1, DBHandler.ivKey)
+                      + "&type=" + EncryptionProvider.Encrypt("pr", DBHandler.key1, DBHandler.ivKey)
+                      + "&origin=" + EncryptionProvider.Encrypt("mobile", DBHandler.key1, DBHandler.ivKey) + "&rollcount="
+                      + EncryptionProvider.Encrypt(txtNoOfRolls.Text, DBHandler.key1, DBHandler.ivKey)
+                      + "&alternateNo="
+                      + EncryptionProvider.Encrypt(txtAlternateContactNo.Text, DBHandler.key1, DBHandler.ivKey)
+                      + "&contactPerson="
+                      + EncryptionProvider.Encrypt(txtAlternateName.Text, DBHandler.key1, DBHandler.ivKey)
+                      + "&contactAddress="
+                      + EncryptionProvider.Encrypt(txtAddress.Text, DBHandler.key1, DBHandler.ivKey);
+            }
+            catch (Exception)
+            {
+            }
 
-            var paperRollResult = MakeHttpWebRequestPostCall.Generic_With_Token(postData, DBHandler.url + DBHandler.paperroll_url_paddup);
-            MessageDialog msgDlg = new MessageDialog("Result is " + paperRollResult.Result);
+            var paperRollResult = await Task.WhenAny(MakeHttpWebRequestPostCall.Generic_Service_Call(postData, DBHandler.url + DBHandler.general_url_paddup,false));
+            MessageDialog msgDlg = new MessageDialog("An already case is open for this request type, kindly try once previous ticket will close for this TID" + paperRollResult.Result);
             await msgDlg.ShowAsync();
+        }
+
+        private void btnHome_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(HomeView));
+        }
+
+        private async void btnLogOut_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            string postData = string.Empty;
+            MessageDialog md = new MessageDialog("Are you sure you want to Logout ?", "Message");
+            bool? result = null;
+            md.Commands.Add(
+               new UICommand("Yes", new UICommandInvokedHandler((cmd) => result = true)));
+            md.Commands.Add(
+               new UICommand("No", new UICommandInvokedHandler((cmd) => result = false)));
+
+            await md.ShowAsync();
+            if (result == true)
+            {
+                // do something   
+                try
+                {
+                    postData = "tid=" + EncryptionProvider.Encrypt(((LoginModel)SuspensionManager.SessionState["loginModel"]).TID, DBHandler.key1, DBHandler.ivKey)
+                            + "&type=" + EncryptionProvider.Encrypt("trm", DBHandler.key1, DBHandler.ivKey)
+                            + "&origin=" + EncryptionProvider.Encrypt("mobile", DBHandler.key1, DBHandler.ivKey);
+                }
+                catch (Exception)
+                {
+                }
+
+                var logOutResult = await Task.WhenAny(MakeHttpWebRequestPostCall.Generic_Service_Call(postData, DBHandler.url + DBHandler.general_url_paddup, false));
+                if (logOutResult.Result != string.Empty)
+                {
+                    Frame.Navigate(typeof(LoginView));
+                }
+            }
         }
     }
 }

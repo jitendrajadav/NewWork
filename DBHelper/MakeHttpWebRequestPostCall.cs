@@ -19,39 +19,39 @@ namespace ICICIMerchant.DBHelper
         /// <param name="model">Class objcet</param>
         /// <param name="methodName">method name for e.g essayFeedbackRequest</param>
         /// <returns></returns>
-        public static async Task<string> Login(string data,string url)
-        {
-            string responseResutl = string.Empty;
-            try
-            {
-                var webRequest = (HttpWebRequest)WebRequest.Create(url);
-                webRequest.Method = "POST";
+        //public static async Task<string> Login(string data,string url)
+        //{
+        //    string responseResutl = string.Empty;
+        //    try
+        //    {
+        //        var webRequest = (HttpWebRequest)WebRequest.Create(url);
+        //        webRequest.Method = "POST";
                 
-                webRequest.ContentType = "application/x-www-form-urlencoded";
-                //webRequest.ContentType = "application/json; charset=utf-8";
-                //var Serialized = SerializeDeserialize.Serialize(model);
-                //string finalSerialized = model.ToString();//Serialized;
-                using (StreamWriter sw = new StreamWriter(await webRequest.GetRequestStreamAsync()))
-                {
-                    sw.Write(data);
-                }
+        //        webRequest.ContentType = "application/x-www-form-urlencoded";
+        //        //webRequest.ContentType = "application/json; charset=utf-8";
+        //        //var Serialized = SerializeDeserialize.Serialize(model);
+        //        //string finalSerialized = model.ToString();//Serialized;
+        //        using (StreamWriter sw = new StreamWriter(await webRequest.GetRequestStreamAsync()))
+        //        {
+        //            sw.Write(data);
+        //        }
 
-                HttpWebResponse httpWebResponse = await webRequest.GetResponseAsync() as HttpWebResponse;
-                using (StreamReader sr = new StreamReader(httpWebResponse.GetResponseStream()))
-                {
-                    if (httpWebResponse.StatusCode != System.Net.HttpStatusCode.Accepted)
-                    {
-                        string messageresult = String.Format("POST failed. Received HTTP {0}", httpWebResponse.StatusCode);
-                    }
-                    responseResutl = sr.ReadToEnd();
-                }
-                return responseResutl;
-            }
-            catch (Exception ex)
-            {
-                return responseResutl;
-            }
-        }
+        //        HttpWebResponse httpWebResponse = await webRequest.GetResponseAsync() as HttpWebResponse;
+        //        using (StreamReader sr = new StreamReader(httpWebResponse.GetResponseStream()))
+        //        {
+        //            if (httpWebResponse.StatusCode != System.Net.HttpStatusCode.Accepted)
+        //            {
+        //                string messageresult = String.Format("POST failed. Received HTTP {0}", httpWebResponse.StatusCode);
+        //            }
+        //            responseResutl = sr.ReadToEnd();
+        //        }
+        //        return responseResutl;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return responseResutl;
+        //    }
+        //}
 
         /// <summary>
         /// Post method for request and responce for every method 
@@ -59,7 +59,7 @@ namespace ICICIMerchant.DBHelper
         /// <param name="model">Class objcet</param>
         /// <param name="methodName">method name for e.g essayFeedbackRequest</param>
         /// <returns></returns>
-        public static async Task<string> Generic_With_Token(string data, string url)
+        public static async Task<string> Generic_Service_Call(string data, string url, bool isLogin)
         {
             string responseResutl = string.Empty;
             try
@@ -67,10 +67,9 @@ namespace ICICIMerchant.DBHelper
                 var webRequest = (HttpWebRequest)WebRequest.Create(url);
                 webRequest.Method = "POST";
                 webRequest.ContentType = "application/x-www-form-urlencoded";
-                webRequest.Headers["Authorization"] = "bearer " + ((LoginModel)SuspensionManager.SessionState["loginModel"]).access_token;
-                //webRequest.ContentType = "application/json; charset=utf-8";
-                //var Serialized = SerializeDeserialize.Serialize(model);
-                //string finalSerialized = model.ToString();//Serialized;
+                if (!isLogin)
+                    webRequest.Headers["Authorization"] = "bearer " + ((LoginModel)SuspensionManager.SessionState["loginModel"]).access_token;
+               
                 using (StreamWriter sw = new StreamWriter(await webRequest.GetRequestStreamAsync()))
                 {
                     sw.Write(data);
@@ -87,7 +86,7 @@ namespace ICICIMerchant.DBHelper
                 }
                 return responseResutl;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return responseResutl;
             }
@@ -122,7 +121,7 @@ namespace ICICIMerchant.DBHelper
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
             }
             return rawServerResponse;

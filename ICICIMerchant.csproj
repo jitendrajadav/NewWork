@@ -89,6 +89,7 @@
     <Compile Include="DBHelper\DBHandler.cs" />
     <Compile Include="DBHelper\MakeHttpWebRequestPostCall.cs" />
     <Compile Include="Helper\EncryptionUtility.cs" />
+    <Compile Include="Helper\ResponseValidation.cs" />
     <Compile Include="Helper\SerializeDeserialize.cs" />
     <Compile Include="HubPage.xaml.cs">
       <DependentUpon>HubPage.xaml</DependentUpon>

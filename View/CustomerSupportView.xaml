@@ -23,12 +23,31 @@
         </Grid.RowDefinitions>
 
         <!-- Header Panel -->
-        <Image 
-            VerticalAlignment="Top"
-            Height="50"
-            Width="Auto"
-            Grid.ColumnSpan="2"
-            Source="ms-appx:///Assets/first-data-logo.png"/>
+        <Grid Grid.ColumnSpan="2">
+            <Grid.Background>
+                <ImageBrush 
+                    Stretch="Uniform"
+                    ImageSource="ms-appx:///Assets/first-data-logo.png"/>
+            </Grid.Background>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Button
+                VerticalAlignment="Center"
+                Content="Home"
+                BorderBrush="Transparent"
+                x:Name="btnHome"
+                Click="btnHome_Click"/>
+            <Button
+                VerticalAlignment="Center"
+                HorizontalAlignment="Right"
+                Content="LogOut"
+                BorderBrush="Transparent"
+                Grid.Column="1"
+                x:Name="btnLogOut"
+                Click="btnLogOut_Click"/>
+        </Grid>
 
         <Grid VerticalAlignment="Center" Grid.Row="1">
             <Grid.RowDefinitions>
@@ -42,26 +61,39 @@
                 Grid.Row="0"
                 Text="CUSTOMER SUPPORT" 
                 HorizontalAlignment="Center"
-                Style="{ThemeResource TitleTextBlockStyle}" Margin="0,12,0,0"/>
+                Style="{ThemeResource TitleTextBlockStyle}"/>
 
             <!--TODO: Content should be placed within the following grid-->
 
-            <TextBlock
-                Style="{ThemeResource TitleTextBlockStyle}"
-                Margin="50 0 0 0"
-                Text="1800 102 1671"
+            <Button
+                VerticalAlignment="Center"
+                HorizontalAlignment="Center"
+                BorderBrush="Transparent"
+                x:Name="btnCS1"
+                Width="480"
+                Click="btnCS1_Click"
+                Content="1800 102 1671"
                 Grid.Row="1"/>
 
-            <TextBlock
-                Style="{ThemeResource TitleTextBlockStyle}"
-                Margin="50 0 0 0"
-                Text="1800 102 1672"
+            <Button
+                VerticalAlignment="Center"
+                HorizontalAlignment="Center"
+                BorderBrush="Transparent"
+                x:Name="btnCS2"
+                Click="btnCS2_Click"
+                Width="480"
+                Content="1800 102 1672"
                 Grid.Row="2"/>
 
-            <TextBlock
-                Style="{ThemeResource TitleTextBlockStyle}"
+            <Button
+                VerticalAlignment="Center"
+                HorizontalAlignment="Center"
+                BorderBrush="Transparent"
+                x:Name="btnMail"
+                Click="btnMail_Click"
                 Margin="50 0 0 0"
-                Text="merchantcare@icicims.com"
+                 Width="480"
+                Content="merchantcare@icicims.com"
                 Grid.Row="3"/>
         </Grid>
 

@@ -23,12 +23,31 @@
         </Grid.RowDefinitions>
 
         <!-- Header Panel -->
-        <Image 
-            VerticalAlignment="Top"
-            Height="50"
-            Width="Auto"
-            Grid.ColumnSpan="2"
-            Source="ms-appx:///Assets/first-data-logo.png"/>
+        <Grid Grid.ColumnSpan="2">
+            <Grid.Background>
+                <ImageBrush 
+                    Stretch="Uniform"
+                    ImageSource="ms-appx:///Assets/first-data-logo.png"/>
+            </Grid.Background>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Button
+                VerticalAlignment="Center"
+                Content="Home"
+                BorderBrush="Transparent"
+                x:Name="btnHome"
+                Click="btnHome_Click"/>
+            <Button
+                VerticalAlignment="Center"
+                HorizontalAlignment="Right"
+                Content="LogOut"
+                BorderBrush="Transparent"
+                Grid.Column="1"
+                x:Name="btnLogOut"
+                Click="btnLogOut_Click"/>
+        </Grid>
 
         <Grid VerticalAlignment="Center" Grid.Row="1">
             <Grid.RowDefinitions>

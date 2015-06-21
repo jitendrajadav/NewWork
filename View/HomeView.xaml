@@ -51,12 +51,32 @@
         </Grid.ColumnDefinitions>
         
         <!-- Header Panel -->
-        <Image 
-            VerticalAlignment="Top"
-            Height="50"
-            Width="Auto"
-            Grid.ColumnSpan="2"
-            Source="ms-appx:///Assets/first-data-logo.png"/>
+        <Grid Grid.ColumnSpan="2">
+            <Grid.Background>
+                <ImageBrush 
+                    Stretch="Uniform"
+                    ImageSource="ms-appx:///Assets/first-data-logo.png"/>
+            </Grid.Background>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Button
+                VerticalAlignment="Center"
+                Content="Home"
+                x:Name="btnHome"
+                BorderBrush="Transparent"
+                Click="btnHome_Click"/>
+            <Button
+                VerticalAlignment="Center"
+                HorizontalAlignment="Right"
+                Content="LogOut"
+                BorderBrush="Transparent"
+                Grid.Column="1"
+                x:Name="btnLogOut"
+                Click="btnLogOut_Click"/>
+        </Grid>
+        
 
         <!--TODO: Content should be placed within the following grid-->
         <Grid Grid.Row="1" Grid.ColumnSpan="2"
@@ -79,6 +99,29 @@
         </Grid>
         
         <!-- Header Panel -->
+        <StackPanel VerticalAlignment="Bottom"
+            Grid.Row="2"
+                    HorizontalAlignment="Center"
+            Height="50"
+            Width="Auto"
+                    Orientation="Horizontal"
+                    Margin="0 0 0 30"
+            Grid.ColumnSpan="2">
+            <Button
+                BorderBrush="Transparent"
+                x:Name="btnCall"
+                Click="btnCall_Click"
+                Content="Call">
+                
+            </Button>
+            <Button
+                BorderBrush="Transparent"
+                x:Name="btnEmail"
+                Click="btnEmail_Click"
+                Content="Email">
+                
+            </Button>
+        </StackPanel>
         <Image 
             VerticalAlignment="Bottom"
             Grid.Row="2"

@@ -3,6 +3,7 @@ using ICICIMerchant.DBHelper;
 using ICICIMerchant.Helper;
 using ICICIMerchant.Model;
 using System;
+using System.Threading.Tasks;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -102,42 +103,69 @@ namespace ICICIMerchant.View
 
         private async void btnLogin_Click(object sender, RoutedEventArgs e)
         {
-            //var result = EncryptionUtility.AES_Encrypt("Jitendra", "Jadav");
-            //var decrypt = EncryptionUtility.AES_Decrypt("dAYV8p7FHE8JjdXx2A6msg==", "Jadav");
-            //var npostData = "grant_type=password&client_id=client1&client_secret=secret&username=" +
-            //    EncryptionUtility.Encrypt(txtUsername.Text, DBHandler.encryptiPass) + "&password=" +
-            //    EncryptionUtility.Encrypt(pwdPassword.Password, DBHandler.encryptiPass) + "&sec=" +
-            //    EncryptionUtility.Encrypt(txtUsername.Text, DBHandler.encryptiPassSec);
+            if (txtUsername.Text != string.Empty)
+            {
+                if (pwdPassword.Password != string.Empty)
+                {
+                    #region Old code
+                    //var result = EncryptionUtility.AES_Encrypt("Jitendra", "Jadav");
+                    //var decrypt = EncryptionUtility.AES_Decrypt("dAYV8p7FHE8JjdXx2A6msg==", "Jadav");
+                    //var npostData = "grant_type=password&client_id=client1&client_secret=secret&username=" +
+                    //    EncryptionUtility.Encrypt(txtUsername.Text, DBHandler.encryptiPass) + "&password=" +
+                    //    EncryptionUtility.Encrypt(pwdPassword.Password, DBHandler.encryptiPass) + "&sec=" +
+                    //    EncryptionUtility.Encrypt(txtUsername.Text, DBHandler.encryptiPassSec);
 
+                    #endregion
 
-            var npostData = "grant_type=password&client_id=client1&client_secret=secret&username=" +
-                            EncryptionProvider.Encrypt(txtUsername.Text, DBHandler.key1, DBHandler.ivKey) + "&password=" +
-                            EncryptionProvider.Encrypt(pwdPassword.Password, DBHandler.key1, DBHandler.ivKey) + "&sec=" +
-                            EncryptionProvider.Encrypt(txtUsername.Text, DBHandler.key2, DBHandler.ivKey);
+                    string postData = string.Empty;
+                    try
+                    {
+                        postData = "grant_type=password&client_id=client1&client_secret=secret&username="
+                                + EncryptionProvider.Encrypt(txtUsername.Text, DBHandler.key1, DBHandler.ivKey)
+                                + "&password=" + EncryptionProvider.Encrypt(pwdPassword.Password, DBHandler.key1, DBHandler.ivKey)
+                                + "&sec=" + EncryptionProvider.Encrypt(txtUsername.Text, DBHandler.key2, DBHandler.ivKey);
+                    }
+                    catch (Exception)
+                    {
+                    }
 
-            //EncryptionHelper objEncryptionHelper = new EncryptionHelper();
-            //var npostData = "grant_type=password&client_id=client1&client_secret=secret&username=" +
-            //    objEncryptionHelper.Encrypt(txtUsername.Text, DBHandler.key1,DBHandler.ivKey) + "&password=" +
-            //    objEncryptionHelper.Encrypt(pwdPassword.Password, DBHandler.key1, DBHandler.ivKey) + "&sec=" +
-            //    objEncryptionHelper.Encrypt(txtUsername.Text, DBHandler.key2, DBHandler.ivKey);
-            //var test1 = EncryptionProvider.Encrypt("62577044", "test");
-            //npostData = "grant_type=password&client_id=client1&client_secret=secret&username=g7U9yAWMqSsFHXs2L4PRrg%3D&password=odBmM6sTZA32MGj1uolwfg%3D&sec=Qcs3Z8DfHVdpXoQnCVg%2Fhg%3D%3D";
-           
-           var loginResponse = await MakeHttpWebRequestPostCall.Login(npostData, DBHandler.url + DBHandler.login_url_paddup);
-           LoginModel loginModel = SerializeDeserialize.Deserialize<LoginModel>(loginResponse);
-           
-           if (loginModel != null)
-           {
-               loginModel.TID = txtUsername.Text;
-               loginModel.TPIN = pwdPassword.Password;
-               SuspensionManager.SessionState["loginModel"] = loginModel;
-               Frame.Navigate(typeof(HomeView));
-           }
-           else
-           {
-               MessageDialog msgDlg = new MessageDialog("Please enter valid TID & TPIN");
-               await msgDlg.ShowAsync();
-           }
+                    #region Old code
+                    //EncryptionHelper objEncryptionHelper = new EncryptionHelper();
+                    //var npostData = "grant_type=password&client_id=client1&client_secret=secret&username=" +
+                    //    objEncryptionHelper.Encrypt(txtUsername.Text, DBHandler.key1,DBHandler.ivKey) + "&password=" +
+                    //    objEncryptionHelper.Encrypt(pwdPassword.Password, DBHandler.key1, DBHandler.ivKey) + "&sec=" +
+                    //    objEncryptionHelper.Encrypt(txtUsername.Text, DBHandler.key2, DBHandler.ivKey);
+                    //var test1 = EncryptionProvider.Encrypt("62577044", "test");
+
+                    #endregion
+
+                    var loginResponse = await Task.WhenAny(MakeHttpWebRequestPostCall.Generic_Service_Call(postData, DBHandler.url + DBHandler.login_url_paddup, true));
+                    LoginModel loginModel = SerializeDeserialize.Deserialize<LoginModel>(loginResponse.Result);
+
+                    if (loginModel != null)
+                    {
+                        loginModel.TID = txtUsername.Text;
+                        loginModel.TPIN = pwdPassword.Password;
+                        SuspensionManager.SessionState["loginModel"] = loginModel;
+                        Frame.Navigate(typeof(HomeView));
+                    }
+                    else
+                    {
+                        MessageDialog msgDlg = new MessageDialog("Please enter valid TID & TPIN");
+                        await msgDlg.ShowAsync();
+                    } 
+                }
+                else
+                {
+                    MessageDialog msgDlg = new MessageDialog("Please Enter TPIN");
+                    await msgDlg.ShowAsync();
+                }
+            }
+            else
+            {
+                MessageDialog msgDlg = new MessageDialog("Please Enter TID");
+                await msgDlg.ShowAsync();
+            }
         }
     }
 

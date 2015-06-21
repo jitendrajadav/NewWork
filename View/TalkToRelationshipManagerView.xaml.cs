@@ -1,19 +1,11 @@
 ﻿using ICICIMerchant.Common;
+using ICICIMerchant.DBHelper;
+using ICICIMerchant.Helper;
+using ICICIMerchant.Model;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.Graphics.Display;
-using Windows.UI.ViewManagement;
-using Windows.UI.Xaml;
+using System.Threading.Tasks;
+using Windows.UI.Popups;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
 // The Basic Page item template is documented at http://go.microsoft.com/fwlink/?LinkID=390556
@@ -107,5 +99,62 @@ namespace ICICIMerchant.View
         }
 
         #endregion
+
+        private async void btnSubmit_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            string postData = string.Empty;
+            try
+            {
+                postData = "tid=" + EncryptionProvider.Encrypt(((LoginModel)SuspensionManager.SessionState["loginModel"]).TID, DBHandler.key1, DBHandler.ivKey)
+                       + "&type=" + EncryptionProvider.Encrypt("trm", DBHandler.key1, DBHandler.ivKey)
+                       + "&origin=" + EncryptionProvider.Encrypt("mobile", DBHandler.key1, DBHandler.ivKey)
+                       + "&prefDate=" + EncryptionProvider.Encrypt(dtEMD.Date.ToString(), DBHandler.key1, DBHandler.ivKey)
+                       + "&caseDescription=" + EncryptionProvider.Encrypt(txtQuery.Text, DBHandler.key1, DBHandler.ivKey);
+            }
+            catch (Exception)
+            {
+            }
+
+            var talkToRelationShipMgrResult = await Task.WhenAny(MakeHttpWebRequestPostCall.Generic_Service_Call(postData, DBHandler.url + DBHandler.general_url_paddup,false));
+            MessageDialog msgDlg = new MessageDialog("Result is " + talkToRelationShipMgrResult.Result);
+            await msgDlg.ShowAsync();
+        }
+
+        private void btnHome_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(HomeView));
+        }
+
+        private async void btnLogOut_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            string postData = string.Empty;
+            MessageDialog md = new MessageDialog("Are you sure you want to Logout ?", "Message");
+            bool? result = null;
+            md.Commands.Add(
+               new UICommand("Yes", new UICommandInvokedHandler((cmd) => result = true)));
+            md.Commands.Add(
+               new UICommand("No", new UICommandInvokedHandler((cmd) => result = false)));
+
+            await md.ShowAsync();
+            if (result == true)
+            {
+                // do something   
+                try
+                {
+                    postData = "tid=" + EncryptionProvider.Encrypt(((LoginModel)SuspensionManager.SessionState["loginModel"]).TID, DBHandler.key1, DBHandler.ivKey)
+                            + "&type=" + EncryptionProvider.Encrypt("trm", DBHandler.key1, DBHandler.ivKey)
+                            + "&origin=" + EncryptionProvider.Encrypt("mobile", DBHandler.key1, DBHandler.ivKey);
+                }
+                catch (Exception)
+                {
+                }
+
+                var logOutResult = await Task.WhenAny(MakeHttpWebRequestPostCall.Generic_Service_Call(postData, DBHandler.url + DBHandler.general_url_paddup, false));
+                if (logOutResult.Result != string.Empty)
+                {
+                    Frame.Navigate(typeof(LoginView));
+                }
+            }
+        }
     }
 }

@@ -1,19 +1,12 @@
 ﻿using ICICIMerchant.Common;
+using ICICIMerchant.DBHelper;
+using ICICIMerchant.Helper;
+using ICICIMerchant.Model;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.Graphics.Display;
-using Windows.UI.ViewManagement;
+using System.Threading.Tasks;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
 // The Basic Page item template is documented at http://go.microsoft.com/fwlink/?LinkID=390556
@@ -107,5 +100,79 @@ namespace ICICIMerchant.View
         }
 
         #endregion
+
+        private void btnCS1_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Windows.ApplicationModel.Calls.PhoneCallManager.ShowPhoneCallUI("18001021671", "display name");
+            }
+            catch (Exception)
+            {
+            }
+        }
+
+        private void btnCS2_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Windows.ApplicationModel.Calls.PhoneCallManager.ShowPhoneCallUI("18001021672", "display name");
+            }
+            catch (Exception)
+            {
+            }
+        }
+
+        private async void btnMail_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Windows.ApplicationModel.Email.EmailMessage mail = new Windows.ApplicationModel.Email.EmailMessage();
+                mail.Subject = "This is Subject";
+                mail.Body = "This is body of demo mail";
+                mail.To.Add(new Windows.ApplicationModel.Email.EmailRecipient("merchantcare@icicims.com", "display name"));
+                await Windows.ApplicationModel.Email.EmailManager.ShowComposeNewEmailAsync(mail);
+            }
+            catch (Exception)
+            {
+            }
+        }
+
+        private void btnHome_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(HomeView));
+        }
+
+        private async void btnLogOut_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            string postData = string.Empty;
+            MessageDialog md = new MessageDialog("Are you sure you want to Logout ?", "Message");
+            bool? result = null;
+            md.Commands.Add(
+               new UICommand("Yes", new UICommandInvokedHandler((cmd) => result = true)));
+            md.Commands.Add(
+               new UICommand("No", new UICommandInvokedHandler((cmd) => result = false)));
+
+            await md.ShowAsync();
+            if (result == true)
+            {
+                // do something   
+                try
+                {
+                    postData = "tid=" + EncryptionProvider.Encrypt(((LoginModel)SuspensionManager.SessionState["loginModel"]).TID, DBHandler.key1, DBHandler.ivKey)
+                            + "&type=" + EncryptionProvider.Encrypt("trm", DBHandler.key1, DBHandler.ivKey)
+                            + "&origin=" + EncryptionProvider.Encrypt("mobile", DBHandler.key1, DBHandler.ivKey);
+                }
+                catch (Exception)
+                {
+                }
+
+                var logOutResult = await Task.WhenAny(MakeHttpWebRequestPostCall.Generic_Service_Call(postData, DBHandler.url + DBHandler.general_url_paddup, false));
+                if (logOutResult.Result != string.Empty)
+                {
+                    Frame.Navigate(typeof(LoginView));
+                }
+            }
+        }
     }
 }

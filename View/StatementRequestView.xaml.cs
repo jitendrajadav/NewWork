@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Navigation;
 
 // The Basic Page item template is documented at http://go.microsoft.com/fwlink/?LinkID=390556
@@ -139,9 +140,41 @@ namespace ICICIMerchant.View
             {
             }
 
-            var lastStatement = await Task.WhenAny(MakeHttpWebRequestPostCall.Generic_Service_Call(postData, DBHandler.url + DBHandler.general_url_paddup,false));
-            MessageDialog msgDlg = new MessageDialog("Result is " + lastStatement.Result);
-            await msgDlg.ShowAsync();
+            var lastStatement = await Task.WhenAny(MakeHttpWebRequestPostCall.Generic_Service_Call(postData, DBHandler.url + DBHandler.general_url_paddup, false));
+            MessageDialog md = new MessageDialog("Your request is registered with reference number: " + lastStatement.Result + ".This will be processed by " + DateTime.Today.ToString(System.Globalization.DateTimeFormatInfo.CurrentInfo.ShortDatePattern) + "\nDo you want to give your feedback ", "Feedback");
+            bool? result = null;
+            md.Commands.Add(
+               new UICommand("Yes", new UICommandInvokedHandler((cmd) => result = true)));
+            md.Commands.Add(
+               new UICommand("No", new UICommandInvokedHandler((cmd) => result = false)));
+
+            await md.ShowAsync();
+            if (result == true)
+            {
+                Popup nonParentPopup = null;
+                // if we already have one showing, don't create another one
+                if (nonParentPopup == null)
+                {
+                    // create the Popup in code
+                    nonParentPopup = new Popup();
+
+                    // we are creating this in code and need to handle multiple instances
+                    // so we are attaching to the Popup.Closed event to remove our reference
+                    nonParentPopup.Closed += (senderPopup, argsPopup) =>
+                    {
+                        nonParentPopup = null;
+                    };
+                    nonParentPopup.HorizontalOffset = 0;
+                    nonParentPopup.VerticalOffset = Window.Current.Bounds.Height / 4;
+
+                    // set the content to our RateView
+                    nonParentPopup.Child = new RateView();
+
+                    // open the Popup
+                    nonParentPopup.IsOpen = true;
+                }
+
+            }
         }
 
         private async void btnStatementOfDateRange_Click(object sender, RoutedEventArgs e)

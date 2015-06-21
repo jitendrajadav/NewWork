@@ -113,6 +113,9 @@
     <Compile Include="View\PaperRollRequestView.xaml.cs">
       <DependentUpon>PaperRollRequestView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\RateView.xaml.cs">
+      <DependentUpon>RateView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\RegisterContactNumberView.xaml.cs">
       <DependentUpon>RegisterContactNumberView.xaml</DependentUpon>
     </Compile>
@@ -184,6 +187,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\RateView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\RegisterContactNumberView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -207,6 +214,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="JRatingControl">
+      <HintPath>packages\JISoft.Rating.1.0.3\lib\portable-wpa81+win81\JRatingControl.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '12.0' ">
     <VisualStudioVersion>12.0</VisualStudioVersion>

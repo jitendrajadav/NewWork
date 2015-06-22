@@ -21,6 +21,7 @@
                 <RowDefinition/>
                 <RowDefinition/>
                 <RowDefinition/>
+                <RowDefinition/>
             </Grid.RowDefinitions>
             
             <Image
@@ -44,6 +45,13 @@
                 Click="btnLogin_Click"
                 HorizontalAlignment="Center"
                 Grid.Row="3"/>
+            <ProgressRing 
+                Grid.Row="4"
+                Height="70"
+                x:Name="myLoader"
+                Width="70"
+                IsActive="False"/>
+                
         </Grid>
 
         <Image 

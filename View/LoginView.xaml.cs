@@ -106,6 +106,10 @@ namespace ICICIMerchant.View
         {
             if (txtUsername.Text != string.Empty)
             {
+                myLoader.IsActive = true;
+                btnLogin.IsEnabled = false;
+                txtUsername.IsEnabled = false;
+                pwdPassword.IsEnabled = false;
                 if (pwdPassword.Password != string.Empty)
                 {
                     #region Old code
@@ -149,23 +153,43 @@ namespace ICICIMerchant.View
                         loginModel.TPIN = pwdPassword.Password;
                         SuspensionManager.SessionState["loginModel"] = loginModel;
                         Frame.Navigate(typeof(HomeView));
+                        myLoader.IsActive = false;
+                        btnLogin.IsEnabled = true;
+                        txtUsername.IsEnabled = true;
+                        pwdPassword.IsEnabled = true;
+
                     }
                     else
                     {
                         MessageDialog msgDlg = new MessageDialog("Please enter valid TID & TPIN");
                         await msgDlg.ShowAsync();
+                        myLoader.IsActive = false;
+                        btnLogin.IsEnabled = true;
+                        txtUsername.IsEnabled = true;
+                        pwdPassword.IsEnabled = true;
+
                     } 
                 }
                 else
                 {
                     MessageDialog msgDlg = new MessageDialog("Please Enter TPIN");
                     await msgDlg.ShowAsync();
+                    myLoader.IsActive = false;
+                    btnLogin.IsEnabled = true;
+                    txtUsername.IsEnabled = true;
+                    pwdPassword.IsEnabled = true;
+
                 }
             }
             else
             {
                 MessageDialog msgDlg = new MessageDialog("Please Enter TID");
                 await msgDlg.ShowAsync();
+                myLoader.IsActive = false;
+                btnLogin.IsEnabled = true;
+                txtUsername.IsEnabled = true;
+                pwdPassword.IsEnabled = true;
+
             }
         }
     }

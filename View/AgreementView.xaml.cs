@@ -7,6 +7,8 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Graphics.Display;
+using Windows.Phone.UI.Input;
+using Windows.UI.Popups;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -34,6 +36,31 @@ namespace ICICIMerchant.View
             this.navigationHelper = new NavigationHelper(this);
             this.navigationHelper.LoadState += this.NavigationHelper_LoadState;
             this.navigationHelper.SaveState += this.NavigationHelper_SaveState;
+            HardwareButtons.BackPressed += HardwareButtons_BackPressed;
+        }
+
+        async void HardwareButtons_BackPressed(object sender, BackPressedEventArgs e)
+        {
+            e.Handled = true;
+            if (Frame.CanGoBack)
+            {
+                Frame.GoBack();
+            }
+            else
+            {
+                var msg = new MessageDialog("Confirm Close");
+                var okBtn = new UICommand("Yes");
+                var cancelBtn = new UICommand("No");
+                msg.Commands.Add(okBtn);
+                msg.Commands.Add(cancelBtn);
+                IUICommand result = await msg.ShowAsync();
+
+                if (result != null && result.Label == "Yes")
+                {
+                    Application.Current.Exit();
+                }
+            }
+
         }
 
         /// <summary>
@@ -109,7 +136,7 @@ namespace ICICIMerchant.View
 
         private void btnCancel_Click(object sender, RoutedEventArgs e)
         {
-
+            Application.Current.Exit();
         }
 
         private void btnAgree_Click(object sender, RoutedEventArgs e)

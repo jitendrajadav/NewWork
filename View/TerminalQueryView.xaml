@@ -48,82 +48,91 @@
                 x:Name="btnLogOut"
                 Click="btnLogOut_Click"/>
         </Grid>
-        
-        <Grid VerticalAlignment="Center" Grid.Row="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
-            
-            <TextBlock 
-                Grid.Row="0"
-                Text="TERMINAL RELATED QUERY" 
-                HorizontalAlignment="Center"
-                Style="{ThemeResource TitleTextBlockStyle}" Margin="0,12,0,0"/>
 
-            <!--TODO: Content should be placed within the following grid-->
-            <ComboBox Grid.Row="1" 
+        <ScrollViewer VerticalAlignment="Center" Grid.Row="1">
+            <Grid VerticalAlignment="Center" Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock 
+                    Grid.Row="0"
+                    Text="TERMINAL RELATED QUERY" 
+                    HorizontalAlignment="Center"
+                    Style="{ThemeResource TitleTextBlockStyle}" Margin="0,12,0,0"/>
+
+                <!--TODO: Content should be placed within the following grid-->
+                <ComboBox Grid.Row="1" 
                       x:Name="cmbTerminalQuery" 
                       SelectionChanged="cmbTerminalQuery_SelectionChanged">
-                <ComboBoxItem Content="Card not accepting"/>
-                <ComboBoxItem Content="Printer not working"/>
-                <ComboBoxItem Content="No Power"/>
-                <ComboBoxItem Content="Unable to Settle"/>
-                <ComboBoxItem Content="Error message"/>
-                <ComboBoxItem Content="Others"/>
-            </ComboBox>
+                    <ComboBoxItem 
+                        Content="Card not accepting"/>
+                    <ComboBoxItem 
+                        Content="Printer not working"/>
+                    <ComboBoxItem 
+                        Content="No Power"/>
+                    <ComboBoxItem 
+                        Content="Unable to Settle"/>
+                    <ComboBoxItem 
+                        Content="Error message"/>
+                    <ComboBoxItem 
+                        Content="Others"/>
+                </ComboBox>
 
-            <ComboBox Grid.Row="2" 
+                <ComboBox Grid.Row="2" 
                       Visibility="Collapsed"
                       x:Name="cmbTerminalQueryErrorMessage" 
                       SelectionChanged="cmbTerminalQueryErrorMessage_SelectionChanged">
-                <ComboBoxItem Content="Connectivity error"/>
-                <ComboBoxItem Content="No line"/>
-                <ComboBoxItem Content="Try again line busy"/>
-            </ComboBox>
+                    <ComboBoxItem Content="Connectivity error"/>
+                    <ComboBoxItem Content="No line"/>
+                    <ComboBoxItem Content="Try again line busy"/>
+                </ComboBox>
 
-            <TextBox
-                x:Name="txtAlternameNo"
-                PlaceholderText="Alternate No"
-                InputScope="Number"
-                Grid.Row="3"/>
+                <TextBox
+                    x:Name="txtAlternameNo"
+                    PlaceholderText="Alternate No"
+                    InputScope="Number"
+                    Grid.Row="3"/>
 
-            <TextBox
-                x:Name="txtAlternameName"
-                PlaceholderText="Alternate Name"
-                Grid.Row="4"/>
+                <TextBox
+                    x:Name="txtAlternameName"
+                    PlaceholderText="Alternate Name"
+                    Grid.Row="4"/>
 
-            <TextBox
-                PlaceholderText="Address"
-                Height="100"
-                x:Name="txtAddress"
-                Grid.Row="5"/>
+                <TextBox
+                    PlaceholderText="Address"
+                    Height="75"
+                    x:Name="txtAddress"
+                    Grid.Row="5"/>
 
-            <DatePicker
-                x:Name="dtEMD"
-                Header="Expectected Meeting Date"
-                Grid.Row="6"/>
+                <DatePicker
+                    x:Name="dtEMD"
+                    Header="Expectected Meeting Date"
+                    Grid.Row="6"/>
 
-            <TextBox
-                Height="75"
-                x:Name="txtIssueDescription"
-                PlaceholderText="Issue Description"
-                Grid.Row="7"/>
+                <TextBox
+                    Height="75"
+                    x:Name="txtIssueDescription"
+                    PlaceholderText="Issue Description"
+                    Grid.Row="7"/>
 
-            <Button
-                HorizontalAlignment="Center"
-                Grid.Row="8"
-                x:Name="btnSubmit"
-                Click="btnSubmit_Click"
-                Content="Submit"/>
-        </Grid>
+                <Button
+                    HorizontalAlignment="Center"
+                    Grid.Row="8"
+                    x:Name="btnSubmit"
+                    Click="btnSubmit_Click"
+                    Content="Submit"/>
+            </Grid>
+
+        </ScrollViewer>
 
         <!-- Footer Panel -->
         <Image 
